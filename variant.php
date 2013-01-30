@@ -12,6 +12,7 @@
  include "class/mysql-class.php";
  $base = new class_mysql_base();
  include "menu.php";
+ if ($_GET['variant']){$_POST['variant']=$_GET['variant'];$_POST['predmet']=1;}
 echo "<center><form action='variant.php' method='POST' enctype='multipart/form-data'>
  <table width=90% style='border: 1px solid blue;margin-top:20px;background-color:white;'><tr><td>
  </td><td><center><h2><p><b>Введіть варіант та предмет </b></p></h2></center>
@@ -25,7 +26,9 @@ if (($_POST['variant']!='') && ($_POST['predmet'])!=''){
 //print_r($question);
  
 $suma = array();
+if ($question!=NULL){
 echo "<table bgcolor=white border=1><tr><td>№ Питання</td><td>Питання по групам</td><td>Графік</td><td>Складність <br> питання</td><td>Дискримінативність <br> питання</td><td>Показник</td>";
+}else{echo"<table bgcolor=white border=1>";}
 for ($j=0;$j<count($question);$j++){
 
 
@@ -63,7 +66,9 @@ echo "<tr><td>Питання ".($j+1)."</td><td> [".$suma[0]."%] [".$suma[1]."%] [".$su
       }
 	  var pos=1;</script>
 	 ";
-	 echo "<div id='chart_div".$j."'></div></td><td>".round((($question[$j]['check'])/($question[$j]['sumstyd'])),2)."</td><td>".$question[$j]['discrit']."</td><td>".$question[$j]['validn']."</td>";
+	 echo "<div id='chart_div".$j."'></div></td><td>".round((($question[$j]['check'])/($question[$j]['sumstyd'])),2)."</td><td>".$question[$j]['discrit']."</td>";
+	 
+	 if($question[$j]['validn']!=""){echo"<td bgcolor=yellow>".$question[$j]['validn'];}else{echo"<td> ";}echo"</td>";
 	 echo "<script type='text/javascript'>
 	 
 	$('#chart_div".$j."').on('mousedown', function(e){

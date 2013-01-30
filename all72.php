@@ -4,6 +4,7 @@
 
      
 <?php
+if ($_SESSION['name_sesion_a']=="admin"){
  include "class/function.php";
   include "class/mysql-class.php";
 include_once("XLSToDBNew.class.php");
@@ -20,7 +21,7 @@ echo $a;
 <HTML>
 <HEAD><TITLE>Валідність тестових завдань</TITLE>
 <META http-equiv="Content-Type" Content="text/html; charset=windows-1251">
-<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="stylesheet" href="css/style.css" type="text/css">
 </HEAD>
 <BODY bgcolor="#94AAB5">
 
@@ -71,7 +72,10 @@ $variantArray=$data->getVariants($fileXLS);
 
 $lehki = array();
 $vashki = array();
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+if ($_POST['bd']=='on'){
+	$last_id_type = $base->insert("INSERT INTO  `val`.`type_validn` (`date` ,`note`) VALUES ('".date("Y-m-d")."', '".$fileXLS."');");}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 
 foreach ($variantArray as $vk=>$vv)
 {
@@ -107,11 +111,13 @@ for($i=1;$i<$data->predmet;$i++)
 	$strResult .= "<br><br><b>Варіант: " . $vk . "; Предмет: " . $i . "; Кількість студентів: " . $userNum . ".</b><br>";
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	if ($_POST['bd']=='on'){
-	$last_id = $base->insert("INSERT INTO  `val`.`variant` (`variant` ,`predmet` ,`sumstyd`) VALUES ('".$vk."', '".$i."', '".$userNum."');");}
+	$last_id = $base->insert("INSERT INTO  `val`.`variant` (`variant` ,`predmet` ,`sumstyd`,`type`) VALUES ('".$vk."', '".$i."', '".$userNum."','".$last_id_type."');");}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	$group   = floor($userNum/5)+1;
-	
+//----------------------------------------------------discrete---------------------------	
+	$group_discret  = floor($userNum/3)+1;
+//----------------------------------------------------discrete---------------------------		
 	$tempUserArr = array();
 
 	//echo $i .  " - ";	
@@ -119,7 +125,10 @@ for($i=1;$i<$data->predmet;$i++)
 	{
 		$grp = 1;
 		$ind = 0;
-
+//----------------------------------------------------discrete---------------------------			
+		$grp_discret = 1;
+		$ind_discret = 0;
+//----------------------------------------------------discrete---------------------------	
 		$tempUserArr[1] = 0;
 		$tempUserArr[2] = 0;
 		$tempUserArr[3] = 0;
@@ -141,6 +150,29 @@ for($i=1;$i<$data->predmet;$i++)
 				$ind=0;
 			}
 		}
+//----------------------------------------------------discrete---------------------------		
+		$discret[1]=0;
+		$discret[2]=0;
+		$discret[3]=0;
+		foreach ($tempArr as $userid=>$mark)
+		{
+			if($myArray[$userid][$i]['question'][$j] > 0)
+			{
+				$discret[$grp_discret]++;
+			}
+
+			$ind_discret++;
+
+			if($ind_discret >= $group_discret)
+			{
+				$grp_discret++;
+				$ind_discret=0;
+			}
+		}
+		//echo $discret[1]."   ".$discret[2]." ".$discret[3]." | | ".$tempUserArr[1]." ".$tempUserArr[2]." ".$tempUserArr[3]." ".$tempUserArr[4]." ".$tempUserArr[5]."<br>";
+		$discr_zavd=($discret[1]-$discret[3])/$group_discret;
+		//echo round($discr_zavd,2)." <br> ";
+//----------------------------------------------------discrete---------------------------
 
 		$answerCorrect = $tempUserArr[1] + $tempUserArr[2] + $tempUserArr[3] + $tempUserArr[4] + $tempUserArr[5];
 
@@ -190,8 +222,9 @@ if ($_POST['bd']=='on'){
 `gr4` ,
 `gr5` ,
 `validn`,
-`check`) VALUES (
- '".$last_id."',  '".$j."',  '".round($tempUserArr[1], 1)."',  '".round($tempUserArr[2], 1)."',  '".round($tempUserArr[3], 1)."',  '".round($tempUserArr[4], 1)."',  '".round($tempUserArr[5], 1)."', '".$strVal."','".$answerCorrect."'
+`check`,
+`discrit`) VALUES (
+ '".$last_id."',  '".$j."',  '".round($tempUserArr[1], 1)."',  '".round($tempUserArr[2], 1)."',  '".round($tempUserArr[3], 1)."',  '".round($tempUserArr[4], 1)."',  '".round($tempUserArr[5], 1)."', '".$strVal."','".$answerCorrect."','".round($discr_zavd,2)."'
 )");}
 $strVal = "";
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
@@ -250,5 +283,5 @@ fclose($fp2);}
 </td><td width=200px valign='top'>
 <?
 include ("wood_script.php");
-?>
+}?>
 </BODY></HTML>

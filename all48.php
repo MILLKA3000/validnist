@@ -4,6 +4,7 @@
 
    
 <?php
+if ($_SESSION['name_sesion_a']=="admin"){
  include "class/function.php";
   include "class/mysql-class.php";
 include_once("XLSToDBNew.class.php");
@@ -11,10 +12,7 @@ include_once("XLSToDBNew.class.php");
 $base = new class_mysql_base();
 $data = new XLSToDB("test.xls", 'CP1251');
 
-//new
-$a=$_POST['filename'];
-echo $a;
-//new
+
 
 ?>
 <HTML>
@@ -71,9 +69,10 @@ $variantArray=$data->getVariants($fileXLS);
 
 $lehki = array();
 $vashki = array();
-
-
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+if ($_POST['bd']=='on'){
+	$last_id_type = $base->insert("INSERT INTO  `val`.`type_validn` (`date` ,`note`) VALUES ('".date("Y-m-d")."', '".$fileXLS."');");}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 foreach ($variantArray as $vk=>$vv)
 {
 	$strResult = $strResultHeader;
@@ -109,7 +108,7 @@ for($i=1;$i<$data->predmet;$i++)
 	$strResult .= "<br><br><b>Варіант: " . $vk . "; Предмет: " . $i . "; Кількість студентів: " . $userNum . ".</b><br>";
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	if ($_POST['bd']=='on'){
-	$last_id = $base->insert("INSERT INTO  `val`.`variant` (`variant` ,`predmet` ,`sumstyd`) VALUES ('".$vk."', '".$i."', '".$userNum."');");}
+	$last_id = $base->insert("INSERT INTO  `val`.`variant` (`variant` ,`predmet` ,`sumstyd`,`type`) VALUES ('".$vk."', '".$i."', '".$userNum."','".$last_id_type."');");}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	$group   = floor($userNum/5)+1;
 //----------------------------------------------------discrete---------------------------	
@@ -287,5 +286,5 @@ fclose($fp2);}
 </td><td width=200px valign='top'>
 <?
 include ("wood_script.php");
-?>
+}?>
 </BODY></HTML>

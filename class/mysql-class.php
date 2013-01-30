@@ -46,7 +46,13 @@ function insert($parameter)
   $this->sql_close();
   return $last_id;
  }
-
+function delete($parameter)
+ {  
+  $this->sql_connect();
+  $this->sql_query=$parameter;
+  $this->sql_execute();
+  $this->sql_close();
+ }
 function select_question($variant,$predmet)
  {  
   $questions = array(array());
@@ -75,5 +81,39 @@ function select_question($variant,$predmet)
   $this->sql_close();
   return $questions;
  }
+function select_type_variant($sql)
+{	$var = array(array());
+	$i=0;
+	$this->sql_connect();
+	$this->sql_query=$sql;
+	$this->sql_execute();
+		while($Mas = mysql_fetch_array($this->sql_result))
+		{
+			$var[$i]['id'] = $Mas['id'];
+			$var[$i]['date'] = $Mas['date'];
+			$var[$i]['note'] = $Mas['note'];
+			$i++;
+		}
+	$this->sql_close();
+	return $var;
+}
+function select_variant($sql)
+{	$var = array(array());
+	$i=0;
+	$this->sql_connect();
+	$this->sql_query=$sql;
+	$this->sql_execute();
+		while($Mas = mysql_fetch_array($this->sql_result))
+		{
+			$var[$i]['id'] = $Mas['id'];
+			$var[$i]['variant'] = $Mas['variant'];
+			$var[$i]['predmet'] = $Mas['predmet'];
+			$var[$i]['sumstyd'] = $Mas['sumstyd'];
+			$var[$i]['type'] = $Mas['type'];
+			$i++;
+		}
+	$this->sql_close();
+	return $var;
+}
 }
 ?>
